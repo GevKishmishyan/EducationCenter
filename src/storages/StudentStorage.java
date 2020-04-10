@@ -15,7 +15,7 @@ public class StudentStorage implements Storage{
     public StudentStorage(){
         students = new Student[3];
     }
-    
+
     public void addStudent(Student student){
         if (studentsCount == students.length){
             extendStudentsCount();

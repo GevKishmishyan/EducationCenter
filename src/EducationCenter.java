@@ -46,7 +46,7 @@ public class EducationCenter implements Commands {
                     default:
                         System.err.println("WRONG command, please choose the CORRECT.");
                 }
-            } catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 System.err.println("Please, input DIGITS to choose command.");
             }
 
@@ -58,7 +58,7 @@ public class EducationCenter implements Commands {
         if (!lessonStorage.isEmpty()) {
             lessonStorage.print();
         } else {
-            System.out.println("Lessons list is EMPTY.");
+            System.err.println("Lessons list is EMPTY.");
         }
     }
 
@@ -66,7 +66,7 @@ public class EducationCenter implements Commands {
         if (!studentStorage.isEmpty()) {
             studentStorage.print();
         } else {
-            System.out.println("Students list is EMPTY.");
+            System.err.println("Students list is EMPTY.");
         }
     }
 
@@ -96,7 +96,7 @@ public class EducationCenter implements Commands {
         String lessonDataStr = scanner.nextLine();
         String[] lessonData = lessonDataStr.split(",");
         if (lessonData.length != 4) {
-            System.out.println("Error");
+            System.err.println("You have to only input this form [name,lecturerName,duration,price]");
             addLesson();
         }
         try {
@@ -106,18 +106,22 @@ public class EducationCenter implements Commands {
             Lesson lesson = new Lesson(uniqueID, lessonData[0], lessonData[1], duration, price);
             lessonStorage.addLesson(lesson);
         } catch (NumberFormatException e) {
-            System.out.println("Error");
+            System.err.println("You have to only input numbers for duration and price");
+            // քանի որ (99 տող) sout.err նորմալ աշխատելուց հետո մյուս sout.err (109 տող) ավելի ուշ է աշխատում
+            // քան addLesson-ի մեթոդը, ապա դատարկ for եմ սարքել, որ ուղղակի խնդիրը լուծեմ
+            for (int i = 0; i < 100; i++) {
+            }
             addLesson();
         }
-
     }
 
-    private static Lesson[] getLessonsForStudent() {
+    public static Lesson[] getLessonsForStudent() {
         lessonStorage.print();
         System.out.println("Please, input which workshops you want to participate. [lesson1,lesson2,lesson3,etc.]");
         String lessonsDataStr = scanner.nextLine();
         String[] lessonsData = lessonsDataStr.split(",");
         if (lessonsData.length > lessonStorage.lessonsCount) {
+            System.err.println("We don't have " + lessonsData.length + " wokshops. We only have " + lessonStorage.lessonsCount + " workshop.");
             getLessonsForStudent();
         }
         Lesson[] lessons = new Lesson[lessonsData.length];
@@ -132,16 +136,18 @@ public class EducationCenter implements Commands {
     private static void addStudent() {
         if (!lessonStorage.isEmpty()) {
             Lesson[] lessons = getLessonsForStudent();
-            System.out.println("Please, input your data. [name,surname,phone,email]");
+            System.out.println("Please, input your data. [name,surname,phone,email].");
             String studentDataStr = scanner.nextLine();
             String[] studentData = studentDataStr.split(",");
             if (studentData.length != 4) {
+                System.err.println("You have to only input this form [name,surname,phone,email].");
                 addStudent();
             }
             String uniqueID = UUID.randomUUID().toString();
             Student student = new Student(uniqueID, studentData[0], studentData[1], studentData[2], studentData[3], lessons);
             studentStorage.addStudent(student);
         } else {
+            System.err.println("Lessons list is EMPTY.");
             addLesson();
         }
 
