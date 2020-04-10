@@ -18,40 +18,44 @@ public class EducationCenter implements Commands {
         do {
             printCommands();
             String commandStr = scanner.nextLine();
-            int command = Integer.parseInt(commandStr);
-            switch (command) {
-                case EXIT:
-                    isRun = false;
-                    System.out.println("Bye Bye.");
-                    break;
-                case ADD_STUDENT:
-                    addStudent();
-                    break;
-                case ADD_LESSON:
-                    addLesson();
-                    break;
-                case PRINT_STUDENTS:
-                    printStudents();
-                    break;
-                case PRINT_LESSONS:
-                    printLessons();
-                    break;
-                case CHANGE_STUDENT_LESSON:
-                    changeStudentLesson();
-                    break;
-                case PRINT_STUDENT_BY_LESSON_NAME:
-                    printStudentsByLessonName();
-                    break;
-                default:
-                    System.out.println("WRONG command, please choose the CORRECT.");
-
+            try {
+                int command = Integer.parseInt(commandStr);
+                switch (command) {
+                    case EXIT:
+                        isRun = false;
+                        System.out.println("Bye Bye.");
+                        break;
+                    case ADD_STUDENT:
+                        addStudent();
+                        break;
+                    case ADD_LESSON:
+                        addLesson();
+                        break;
+                    case PRINT_STUDENTS:
+                        printStudents();
+                        break;
+                    case PRINT_LESSONS:
+                        printLessons();
+                        break;
+                    case CHANGE_STUDENT_LESSON:
+                        changeStudentLesson();
+                        break;
+                    case PRINT_STUDENT_BY_LESSON_NAME:
+                        printStudentsByLessonName();
+                        break;
+                    default:
+                        System.err.println("WRONG command, please choose the CORRECT.");
+                }
+            } catch (NumberFormatException e){
+                System.err.println("Please, input DIGITS to choose command.");
             }
+
         } while (isRun);
 
     }
 
     private static void printLessons() {
-        if(!lessonStorage.isEmpty()){
+        if (!lessonStorage.isEmpty()) {
             lessonStorage.print();
         } else {
             System.out.println("Lessons list is EMPTY.");
@@ -59,7 +63,7 @@ public class EducationCenter implements Commands {
     }
 
     private static void printStudents() {
-        if(!studentStorage.isEmpty()){
+        if (!studentStorage.isEmpty()) {
             studentStorage.print();
         } else {
             System.out.println("Students list is EMPTY.");
@@ -113,7 +117,7 @@ public class EducationCenter implements Commands {
         System.out.println("Please, input which workshops you want to participate. [lesson1,lesson2,lesson3,etc.]");
         String lessonsDataStr = scanner.nextLine();
         String[] lessonsData = lessonsDataStr.split(",");
-        if (lessonsData.length > lessonStorage.lessonsCount){
+        if (lessonsData.length > lessonStorage.lessonsCount) {
             getLessonsForStudent();
         }
         Lesson[] lessons = new Lesson[lessonsData.length];
@@ -125,14 +129,13 @@ public class EducationCenter implements Commands {
     }
 
 
-
     private static void addStudent() {
         if (!lessonStorage.isEmpty()) {
             Lesson[] lessons = getLessonsForStudent();
             System.out.println("Please, input your data. [name,surname,phone,email]");
             String studentDataStr = scanner.nextLine();
             String[] studentData = studentDataStr.split(",");
-            if (studentData.length != 4){
+            if (studentData.length != 4) {
                 addStudent();
             }
             String uniqueID = UUID.randomUUID().toString();
