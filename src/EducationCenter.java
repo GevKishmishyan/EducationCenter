@@ -50,7 +50,7 @@ public class EducationCenter implements Commands {
 
     private static void printLessons() {
         if(!lessonStorage.isEmpty()){
-            lessonStorage.printLessonsList();
+            lessonStorage.print();
         } else {
             System.out.println("Lessons list is EMPTY.");
         }
@@ -58,14 +58,14 @@ public class EducationCenter implements Commands {
 
     private static void printStudents() {
         if(!studentStorage.isEmpty()){
-            studentStorage.printStudentList();
+            studentStorage.print();
         } else {
             System.out.println("Students list is EMPTY.");
         }
     }
 
     private static void printStudentsByLessonName() {
-        lessonStorage.printLessonsList();
+        lessonStorage.print();
         System.out.println("Select the workshop to see how many students participating on this.");
         String lesson = scanner.nextLine();
         studentStorage.printStudentsByLessonName(lesson);
@@ -73,10 +73,10 @@ public class EducationCenter implements Commands {
 
     private static void changeStudentLesson() {
         if (!studentStorage.isEmpty()) {
-            studentStorage.printStudentList();
+            studentStorage.print();
             System.out.println("Input student name, which workshops do you want to change.");
             String searchedStudentName = scanner.nextLine();
-            lessonStorage.printLessonsList();
+            lessonStorage.print();
             Lesson[] lessons = getLessonsForStudent();
             Student student = studentStorage.getStudentDataByName(searchedStudentName);
             student.setLessons(lessons);
@@ -106,7 +106,7 @@ public class EducationCenter implements Commands {
     }
 
     private static Lesson[] getLessonsForStudent() {
-        lessonStorage.printLessonsList();
+        lessonStorage.print();
         System.out.println("Please, input which workshops you want to participate. [lesson1,lesson2,lesson3,etc.]");
         String lessonsDataStr = scanner.nextLine();
         String[] lessonsData = lessonsDataStr.split(",");

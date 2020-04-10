@@ -3,7 +3,7 @@ package storages;
 
 import models.Student;
 
-public class StudentStorage {
+public class StudentStorage implements Storage{
     
     private Student[] students;
     private int studentsCount = 0;
@@ -29,7 +29,8 @@ public class StudentStorage {
         students = tmp;
     }
 
-    public void printStudentList(){
+    @Override
+    public void print(){
         for (int i = 0; i < studentsCount; i++) {
             System.out.println(students[i]);
         }
@@ -55,6 +56,7 @@ public class StudentStorage {
 
     }
 
+    @Override
     public boolean isEmpty() {
         return studentsCount == 0;
     }
