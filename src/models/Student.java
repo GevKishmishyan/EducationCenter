@@ -4,13 +4,15 @@ import java.util.Arrays;
 
 public class Student {
 
+    private String id;
     private String name;
     private String surname;
     private String phone;
     private String email;
     private Lesson[] lessons;
 
-    public Student(String name, String surname, String phone, String email, Lesson[] lessons) {
+    public Student(String id, String name, String surname, String phone, String email, Lesson[] lessons) {
+        this.id = id;
         this.name = name;
         this.surname = surname;
         this.phone = phone;
@@ -19,6 +21,14 @@ public class Student {
     }
 
     public Student() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -68,6 +78,7 @@ public class Student {
 
         Student student = (Student) o;
 
+        if (id != null ? !id.equals(student.id) : student.id != null) return false;
         if (name != null ? !name.equals(student.name) : student.name != null) return false;
         if (surname != null ? !surname.equals(student.surname) : student.surname != null) return false;
         if (phone != null ? !phone.equals(student.phone) : student.phone != null) return false;
@@ -78,7 +89,8 @@ public class Student {
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (surname != null ? surname.hashCode() : 0);
         result = 31 * result + (phone != null ? phone.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
@@ -89,7 +101,8 @@ public class Student {
     @Override
     public String toString() {
         return "Student{" +
-                "name='" + name + '\'' +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", phone='" + phone + '\'' +
                 ", email='" + email + '\'' +

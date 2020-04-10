@@ -3,7 +3,9 @@ import models.Student;
 import storages.LessonStorage;
 import storages.StudentStorage;
 
+import java.nio.ByteBuffer;
 import java.util.Scanner;
+import java.util.UUID;
 
 public class EducationCenter implements Commands {
 
@@ -94,9 +96,10 @@ public class EducationCenter implements Commands {
             addLesson();
         }
         try {
+            String uniqueID = UUID.randomUUID().toString();
             int duration = Integer.parseInt(lessonData[2]);
             double price = Double.parseDouble(lessonData[3]);
-            Lesson lesson = new Lesson(lessonData[0], lessonData[1], duration, price);
+            Lesson lesson = new Lesson(uniqueID, lessonData[0], lessonData[1], duration, price);
             lessonStorage.addLesson(lesson);
         } catch (NumberFormatException e) {
             System.out.println("Error");
@@ -132,7 +135,8 @@ public class EducationCenter implements Commands {
             if (studentData.length != 4){
                 addStudent();
             }
-            Student student = new Student(studentData[0], studentData[1], studentData[2], studentData[3], lessons);
+            String uniqueID = UUID.randomUUID().toString();
+            Student student = new Student(uniqueID, studentData[0], studentData[1], studentData[2], studentData[3], lessons);
             studentStorage.addStudent(student);
         } else {
             addLesson();

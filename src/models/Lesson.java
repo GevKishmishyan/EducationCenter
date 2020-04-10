@@ -2,12 +2,14 @@ package models;
 
 public class Lesson {
 
+    private String id;
     private String name;
     private String lecturerName;
     private int duration;
     private double price;
 
-    public Lesson(String name, String lecturerName, int duration, double price) {
+    public Lesson(String id, String name, String lecturerName, int duration, double price) {
+        this.id = id;
         this.name = name;
         this.lecturerName = lecturerName;
         this.duration = duration;
@@ -15,6 +17,14 @@ public class Lesson {
     }
 
     public Lesson() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -58,6 +68,7 @@ public class Lesson {
 
         if (duration != lesson.duration) return false;
         if (Double.compare(lesson.price, price) != 0) return false;
+        if (id != null ? !id.equals(lesson.id) : lesson.id != null) return false;
         if (name != null ? !name.equals(lesson.name) : lesson.name != null) return false;
         return lecturerName != null ? lecturerName.equals(lesson.lecturerName) : lesson.lecturerName == null;
     }
@@ -66,7 +77,8 @@ public class Lesson {
     public int hashCode() {
         int result;
         long temp;
-        result = name != null ? name.hashCode() : 0;
+        result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (lecturerName != null ? lecturerName.hashCode() : 0);
         result = 31 * result + duration;
         temp = Double.doubleToLongBits(price);
@@ -77,7 +89,8 @@ public class Lesson {
     @Override
     public String toString() {
         return "Lesson{" +
-                "name='" + name + '\'' +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
                 ", lecturerName='" + lecturerName + '\'' +
                 ", duration=" + duration +
                 ", price=" + price +
