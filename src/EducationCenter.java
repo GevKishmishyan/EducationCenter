@@ -1,5 +1,3 @@
-
-
 import models.Lesson;
 import models.Student;
 import storages.LessonStorage;
@@ -8,8 +6,6 @@ import storages.StudentStorage;
 import java.util.Scanner;
 
 public class EducationCenter implements Commands {
-
-
 
     private static StudentStorage studentStorage = new StudentStorage();
     private static LessonStorage lessonStorage = new LessonStorage();

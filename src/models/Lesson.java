@@ -14,6 +14,11 @@ public class Lesson {
         this.price = price;
     }
 
+    public Lesson(String name, String lecturerName) {
+        this.name = name;
+        this.lecturerName = lecturerName;
+    }
+
     public Lesson() {
     }
 
