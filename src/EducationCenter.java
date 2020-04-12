@@ -3,7 +3,7 @@ import models.Student;
 import storages.LessonStorage;
 import storages.StudentStorage;
 
-import java.nio.ByteBuffer;
+
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -49,7 +49,6 @@ public class EducationCenter implements Commands {
             } catch (NumberFormatException e) {
                 System.err.println("Please, input DIGITS to choose command.");
             }
-
         } while (isRun);
 
     }
@@ -71,10 +70,15 @@ public class EducationCenter implements Commands {
     }
 
     private static void printStudentsByLessonName() {
-        lessonStorage.print();
-        System.out.println("Select the workshop to see how many students participating on this.");
-        String lesson = scanner.nextLine();
-        studentStorage.printStudentsByLessonName(lesson);
+        if (!studentStorage.isEmpty()) {
+            lessonStorage.print();
+            System.out.println("Select the workshop to see how many students participating on this.");
+            String lesson = scanner.nextLine();
+            studentStorage.printStudentsByLessonName(lesson);
+        } else {
+            System.err.println("Please, add student at first.");
+            addStudent();
+        }
     }
 
     private static void changeStudentLesson() {
@@ -84,7 +88,7 @@ public class EducationCenter implements Commands {
             String searchedStudentName = scanner.nextLine();
             lessonStorage.print();
             Lesson[] lessons = getLessonsForStudent();
-            Student student = studentStorage.getStudentDataByName(searchedStudentName);
+            Student student = studentStorage.getStudentDataByEmail(searchedStudentName);
             student.setLessons(lessons);
         } else {
             addStudent();

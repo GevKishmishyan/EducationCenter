@@ -36,9 +36,9 @@ public class StudentStorage implements Storage{
         }
     }
 
-    public Student getStudentDataByName(String searchedStudentName) {
+    public Student getStudentDataByEmail(String searchedStudentEmail) {
         for (int i = 0; i < studentsCount; i++) {
-            if(students[i].getName().equals(searchedStudentName)){
+            if(students[i].getEmail().equals(searchedStudentEmail)){
                 return students[i];
             }
         }
