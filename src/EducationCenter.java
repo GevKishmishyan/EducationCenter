@@ -110,8 +110,8 @@ public class EducationCenter implements Commands {
         }
     }
 
-    private static void checkInput(int lng){
-        switch (lng){
+    private static void checkLessonInput(int lng) {
+        switch (lng) {
             case 0:
                 //todo When pressed Enter work case 1
                 System.out.println("You have to fill all fields.");
@@ -134,7 +134,7 @@ public class EducationCenter implements Commands {
             String lessonDataStr = scanner.nextLine();
             String[] lessonData = lessonDataStr.split(",");
             if (lessonData.length < 4) {
-                checkInput(lessonData.length);
+                checkLessonInput(lessonData.length);
                 addLesson();
             } else {
                 String uniqueID = UUID.randomUUID().toString();
@@ -155,44 +155,73 @@ public class EducationCenter implements Commands {
 
     public static Lesson[] getLessonsForStudent() {
         lessonStorage.print();
-        System.out.println("Please, input which workshops you want to participate. [lesson1,lesson2,lesson3,etc.]");
+        System.out.println("Please, input which workshops you want to participate. [lesson1, lesson2, lesson3, etc.]");
         String lessonsDataStr = scanner.nextLine();
         String[] lessonsData = lessonsDataStr.split(",");
+        Lesson[] lessons = new Lesson[lessonsData.length];
         if (lessonsData.length > lessonStorage.lessonsCount) {
             System.out.println("We don't have " + lessonsData.length + " wokshops. We only have " + lessonStorage.lessonsCount + " workshop.");
             getLessonsForStudent();
         }
-        Lesson lessonDataByName = lessonStorage.getLessonDataByName(lessonsData[0]);
-        Lesson[] lessons = new Lesson[lessonsData.length];
-        if (lessonDataByName != null) {
-            for (int i = 0; i < lessonsData.length; i++) {
-                Lesson tmp = lessonStorage.getLessonDataByName(lessonsData[i]);
-                lessons[i] = tmp;
+        //todo when user press enter here
+//        else if (lessonsDataStr == "") {
+//            System.out.println("valod");
+//        }
+        else {
+            Lesson lessonDataByName = lessonStorage.getLessonDataByName(lessonsData[0]);
+            if (lessonDataByName != null) {
+                for (int i = 0; i < lessonsData.length; i++) {
+                    //todo add the feature, to say which workshops we don't have
+                    Lesson tmp = lessonStorage.getLessonDataByName(lessonsData[i]);
+                    lessons[i] = tmp;
+                }
+            } else {
+                System.out.println("Lesson is not exist.");
+                addLesson();
             }
-        } else {
-            System.out.println("Lesson is not exist.");
-            addLesson();
         }
         return lessons;
     }
 
+    private static void checkStudentInput(int lng) {
+        switch (lng) {
+            case 0:
+                //todo When pressed Enter work case 1
+                System.out.println("You have to fill all fields.");
+                break;
+            case 1:
+                System.out.println("You forgot to fill surname, phone and email.");
+                break;
+            case 2:
+                System.out.println("You forgot to fill phone and email.");
+                break;
+            case 3:
+                System.out.println("You forgot to fill email.");
+                break;
+        }
+    }
 
     private static void addStudent() {
         if (!lessonStorage.isEmpty()) {
             try {
                 Lesson[] lessons = getLessonsForStudent();
                 if (lessons.length > 0) {
-                    System.out.println("Please, input your data. [name,surname,phone,email].");
+                    System.out.println("Please, input your data. [name, surname, phone, email].");
                     String studentDataStr = scanner.nextLine();
                     String[] studentData = studentDataStr.split(",");
-                    Student studentDataByEmail = studentStorage.getStudentDataByEmail(studentData[3]);
-                    if (studentDataByEmail != null) {
-                        System.out.println("Student is already exist.");
+                    if (studentData.length < 4) {
+                        checkStudentInput(studentData.length);
                         addStudent();
                     } else {
-                        String uniqueID = UUID.randomUUID().toString();
-                        Student student = new Student(uniqueID, studentData[0], studentData[1], studentData[2], studentData[3], lessons);
-                        studentStorage.addStudent(student);
+                        Student studentDataByEmail = studentStorage.getStudentDataByEmail(studentData[3]);
+                        if (studentDataByEmail != null) {
+                            System.out.println("Student is already exist.");
+                            addStudent();
+                        } else {
+                            String uniqueID = UUID.randomUUID().toString();
+                            Student student = new Student(uniqueID, studentData[0], studentData[1], studentData[2], studentData[3], lessons);
+                            studentStorage.addStudent(student);
+                        }
                     }
                 }
             } catch (IndexOutOfBoundsException e) {
