@@ -1,6 +1,7 @@
 package storages;
 
 
+import exceptions.ExistingLessonException;
 import models.Lesson;
 
 public class LessonStorage implements Storage{
@@ -16,7 +17,10 @@ public class LessonStorage implements Storage{
         lessons = new Lesson[3];
     }
 
-    public void addLesson(Lesson lesson){
+    public void addLesson(Lesson lesson) throws ExistingLessonException {
+        if (getLessonDataByName(lesson.getName()) != null){
+            throw new ExistingLessonException("Lesson with " + lesson.getName() + " is already exist.");
+        }
         if (lessonsCount == lessons.length){
             extendLessonsCount();
         }

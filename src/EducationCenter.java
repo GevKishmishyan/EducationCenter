@@ -1,3 +1,4 @@
+import exceptions.ExistingLessonException;
 import models.Lesson;
 import models.Student;
 import storages.LessonStorage;
@@ -17,37 +18,37 @@ public class EducationCenter implements Commands {
         boolean isRun = true;
         do {
             printCommands();
-            String commandStr = scanner.nextLine();
+            int command;
             try {
-                int command = Integer.parseInt(commandStr);
-                switch (command) {
-                    case EXIT:
-                        isRun = false;
-                        System.out.println("Bye Bye.");
-                        break;
-                    case ADD_STUDENT:
-                        addStudent();
-                        break;
-                    case ADD_LESSON:
-                        addLesson();
-                        break;
-                    case PRINT_STUDENTS:
-                        printStudents();
-                        break;
-                    case PRINT_LESSONS:
-                        printLessons();
-                        break;
-                    case CHANGE_STUDENT_LESSON:
-                        changeStudentLesson();
-                        break;
-                    case PRINT_STUDENT_BY_LESSON_NAME:
-                        printStudentsByLessonName();
-                        break;
-                    default:
-                        System.err.println("WRONG command, please choose the CORRECT.");
-                }
+                command = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
-                System.err.println("Please, input DIGITS to choose command.");
+                command = -1;
+            }
+            switch (command) {
+                case EXIT:
+                    isRun = false;
+                    System.out.println("Bye Bye.");
+                    break;
+                case ADD_STUDENT:
+                    addStudent();
+                    break;
+                case ADD_LESSON:
+                    addLesson();
+                    break;
+                case PRINT_STUDENTS:
+                    printStudents();
+                    break;
+                case PRINT_LESSONS:
+                    printLessons();
+                    break;
+                case CHANGE_STUDENT_LESSON:
+                    changeStudentLesson();
+                    break;
+                case PRINT_STUDENT_BY_LESSON_NAME:
+                    printStudentsByLessonName();
+                    break;
+                default:
+                    System.out.println("WRONG command, please choose the CORRECT.");
             }
         } while (isRun);
 
@@ -57,7 +58,7 @@ public class EducationCenter implements Commands {
         if (!lessonStorage.isEmpty()) {
             lessonStorage.print();
         } else {
-            System.err.println("Lessons list is EMPTY.");
+            System.out.println("Lessons list is EMPTY.");
         }
     }
 
@@ -65,18 +66,24 @@ public class EducationCenter implements Commands {
         if (!studentStorage.isEmpty()) {
             studentStorage.print();
         } else {
-            System.err.println("Students list is EMPTY.");
+            System.out.println("Students list is EMPTY.");
         }
     }
 
     private static void printStudentsByLessonName() {
         if (!studentStorage.isEmpty()) {
             lessonStorage.print();
-            System.out.println("Select the workshop to see how many students participating on this.");
+            System.out.println("Select the lesson to see who are participating on this.");
             String lesson = scanner.nextLine();
-            studentStorage.printStudentsByLessonName(lesson);
+            Lesson lessonDataByName = lessonStorage.getLessonDataByName(lesson);
+            if (lessonDataByName != null) {
+                studentStorage.printStudentsByLessonName(lesson);
+            } else {
+                System.out.println("Lesson is not exist.");
+                printStudentsByLessonName();
+            }
         } else {
-            System.err.println("Please, add student at first.");
+            System.out.println("Please, add student at first.");
             addStudent();
         }
     }
@@ -87,36 +94,63 @@ public class EducationCenter implements Commands {
             System.out.println("Input student name, which workshops do you want to change.");
             String searchedStudentName = scanner.nextLine();
             lessonStorage.print();
-            Lesson[] lessons = getLessonsForStudent();
             Student student = studentStorage.getStudentDataByEmail(searchedStudentName);
-            student.setLessons(lessons);
+            if (student != null) {
+                System.out.println("Wrong name");
+                changeStudentLesson();
+            } else {
+                Lesson[] lessons = getLessonsForStudent();
+                if (lessons.length > 0) {
+                    student.setLessons(lessons);
+                    System.out.println("Student lessons are changed.");
+                }
+            }
         } else {
             addStudent();
         }
     }
 
+    private static void checkInput(int lng){
+        switch (lng){
+            case 0:
+                //todo When pressed Enter work case 1
+                System.out.println("You have to fill all fields.");
+                break;
+            case 1:
+                System.out.println("You forgot to fill lecturerName, duration and price.");
+                break;
+            case 2:
+                System.out.println("You forgot to fill duration and price.");
+                break;
+            case 3:
+                System.out.println("You forgot to fill price.");
+                break;
+        }
+    }
+
     private static void addLesson() {
-        System.out.println("Input info about lesson. [name,lecturerName,duration,price]");
-        String lessonDataStr = scanner.nextLine();
-        String[] lessonData = lessonDataStr.split(",");
-        if (lessonData.length != 4) {
-            System.err.println("You have to only input this form [name,lecturerName,duration,price]");
-            addLesson();
-        }
+        System.out.println("Input info about lesson. [name, lecturerName, duration, price]");
         try {
-            String uniqueID = UUID.randomUUID().toString();
-            int duration = Integer.parseInt(lessonData[2]);
-            double price = Double.parseDouble(lessonData[3]);
-            Lesson lesson = new Lesson(uniqueID, lessonData[0], lessonData[1], duration, price);
-            lessonStorage.addLesson(lesson);
-        } catch (NumberFormatException e) {
-            System.err.println("You have to only input numbers for duration and price");
-            // քանի որ (99 տող) sout.err նորմալ աշխատելուց հետո մյուս sout.err (109 տող) ավելի ուշ է աշխատում
-            // քան addLesson-ի մեթոդը, ապա դատարկ for եմ սարքել, որ ուղղակի խնդիրը լուծեմ
-            for (int i = 0; i < 100; i++) {
+            String lessonDataStr = scanner.nextLine();
+            String[] lessonData = lessonDataStr.split(",");
+            if (lessonData.length < 4) {
+                checkInput(lessonData.length);
+                addLesson();
+            } else {
+                String uniqueID = UUID.randomUUID().toString();
+                int duration = Integer.parseInt(lessonData[2]);
+                double price = Double.parseDouble(lessonData[3]);
+                Lesson lesson = new Lesson(uniqueID, lessonData[0], lessonData[1], duration, price);
+                lessonStorage.addLesson(lesson);
+                System.out.println("Lesson was added.");
             }
+        } catch (IndexOutOfBoundsException | NumberFormatException e) {
+            System.out.println("Incorrect value! Please try again.");
             addLesson();
+        } catch (ExistingLessonException e) {
+            System.out.println(e.getMessage());
         }
+
     }
 
     public static Lesson[] getLessonsForStudent() {
@@ -125,13 +159,19 @@ public class EducationCenter implements Commands {
         String lessonsDataStr = scanner.nextLine();
         String[] lessonsData = lessonsDataStr.split(",");
         if (lessonsData.length > lessonStorage.lessonsCount) {
-            System.err.println("We don't have " + lessonsData.length + " wokshops. We only have " + lessonStorage.lessonsCount + " workshop.");
+            System.out.println("We don't have " + lessonsData.length + " wokshops. We only have " + lessonStorage.lessonsCount + " workshop.");
             getLessonsForStudent();
         }
+        Lesson lessonDataByName = lessonStorage.getLessonDataByName(lessonsData[0]);
         Lesson[] lessons = new Lesson[lessonsData.length];
-        for (int i = 0; i < lessonsData.length; i++) {
-            Lesson tmp = lessonStorage.getLessonDataByName(lessonsData[i]);
-            lessons[i] = tmp;
+        if (lessonDataByName != null) {
+            for (int i = 0; i < lessonsData.length; i++) {
+                Lesson tmp = lessonStorage.getLessonDataByName(lessonsData[i]);
+                lessons[i] = tmp;
+            }
+        } else {
+            System.out.println("Lesson is not exist.");
+            addLesson();
         }
         return lessons;
     }
@@ -139,19 +179,28 @@ public class EducationCenter implements Commands {
 
     private static void addStudent() {
         if (!lessonStorage.isEmpty()) {
-            Lesson[] lessons = getLessonsForStudent();
-            System.out.println("Please, input your data. [name,surname,phone,email].");
-            String studentDataStr = scanner.nextLine();
-            String[] studentData = studentDataStr.split(",");
-            if (studentData.length != 4) {
-                System.err.println("You have to only input this form [name,surname,phone,email].");
+            try {
+                Lesson[] lessons = getLessonsForStudent();
+                if (lessons.length > 0) {
+                    System.out.println("Please, input your data. [name,surname,phone,email].");
+                    String studentDataStr = scanner.nextLine();
+                    String[] studentData = studentDataStr.split(",");
+                    Student studentDataByEmail = studentStorage.getStudentDataByEmail(studentData[3]);
+                    if (studentDataByEmail != null) {
+                        System.out.println("Student is already exist.");
+                        addStudent();
+                    } else {
+                        String uniqueID = UUID.randomUUID().toString();
+                        Student student = new Student(uniqueID, studentData[0], studentData[1], studentData[2], studentData[3], lessons);
+                        studentStorage.addStudent(student);
+                    }
+                }
+            } catch (IndexOutOfBoundsException e) {
+                System.out.println("Incorrect value! Please try again.");
                 addStudent();
             }
-            String uniqueID = UUID.randomUUID().toString();
-            Student student = new Student(uniqueID, studentData[0], studentData[1], studentData[2], studentData[3], lessons);
-            studentStorage.addStudent(student);
         } else {
-            System.err.println("Lessons list is EMPTY.");
+            System.out.println("Lessons list is EMPTY. Please add lesson first.");
             addLesson();
         }
 
@@ -159,8 +208,8 @@ public class EducationCenter implements Commands {
 
     private static void printCommands() {
         System.out.println("Choose " + EXIT + " for EXIT.");
-        System.out.println("Choose " + ADD_STUDENT + " for ADD STUDENT.");
         System.out.println("Choose " + ADD_LESSON + " for ADD LESSON.");
+        System.out.println("Choose " + ADD_STUDENT + " for ADD STUDENT.");
         System.out.println("Choose " + PRINT_STUDENTS + " for PRINT STUDENTS LIST.");
         System.out.println("Choose " + PRINT_LESSONS + " for PRINT LESSONS LIST.");
         System.out.println("Choose " + CHANGE_STUDENT_LESSON + " for CHANGING STUDENT LESSON.");
