@@ -132,8 +132,7 @@ public class EducationCenter implements Commands {
             if (lessonDataStr.equals("")) {
                 System.out.println("You forgot to fill all fields.");
                 addLesson();
-            }
-             else if (lessonData.length < 4 && lessonDataStr != "") {
+            } else if (lessonData.length < 4 && lessonDataStr != "") {
                 checkLessonInput(lessonData.length);
                 addLesson();
             } else {
@@ -162,12 +161,7 @@ public class EducationCenter implements Commands {
         if (lessonsData.length > lessonStorage.lessonsCount) {
             System.out.println("We don't have " + lessonsData.length + " wokshops. We only have " + lessonStorage.lessonsCount + " workshop.");
             getLessonsForStudent();
-        }
-        //todo when user press enter here
-//        else if (lessonsDataStr == "") {
-//            System.out.println("valod");
-//        }
-        else {
+        } else {
             Lesson lessonDataByName = lessonStorage.getLessonDataByName(lessonsData[0]);
             if (lessonDataByName != null) {
                 for (int i = 0; i < lessonsData.length; i++) {
@@ -176,8 +170,12 @@ public class EducationCenter implements Commands {
                     lessons[i] = tmp;
                 }
             } else {
-                System.out.println("Lesson is not exist.");
-                addLesson();
+                if (lessonsDataStr.equals("")) {
+                    System.out.println("You have to choose at least 1 lesson.");
+                } else {
+                    System.out.println("Lesson is not exist. Choose these lessons which we have.");
+                }
+                getLessonsForStudent();
             }
         }
         return lessons;
@@ -185,10 +183,6 @@ public class EducationCenter implements Commands {
 
     private static void checkStudentInput(int lng) {
         switch (lng) {
-            case 0:
-                //todo When pressed Enter work case 1
-                System.out.println("You have to fill all fields.");
-                break;
             case 1:
                 System.out.println("You forgot to fill surname, phone and email.");
                 break;
@@ -209,7 +203,10 @@ public class EducationCenter implements Commands {
                     System.out.println("Please, input your data. [name, surname, phone, email].");
                     String studentDataStr = scanner.nextLine();
                     String[] studentData = studentDataStr.split(",");
-                    if (studentData.length < 4) {
+                    if (studentDataStr.equals("")) {
+                        System.out.println("You forgot to fill all fields.");
+                        addStudent();
+                    } else if (studentData.length < 4) {
                         checkStudentInput(studentData.length);
                         addStudent();
                     } else {
