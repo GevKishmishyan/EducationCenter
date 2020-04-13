@@ -112,10 +112,6 @@ public class EducationCenter implements Commands {
 
     private static void checkLessonInput(int lng) {
         switch (lng) {
-            case 0:
-                //todo When pressed Enter work case 1
-                System.out.println("You have to fill all fields.");
-                break;
             case 1:
                 System.out.println("You forgot to fill lecturerName, duration and price.");
                 break;
@@ -133,7 +129,11 @@ public class EducationCenter implements Commands {
         try {
             String lessonDataStr = scanner.nextLine();
             String[] lessonData = lessonDataStr.split(",");
-            if (lessonData.length < 4) {
+            if (lessonDataStr.equals("")) {
+                System.out.println("You forgot to fill all fields.");
+                addLesson();
+            }
+             else if (lessonData.length < 4 && lessonDataStr != "") {
                 checkLessonInput(lessonData.length);
                 addLesson();
             } else {
