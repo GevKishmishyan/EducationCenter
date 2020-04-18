@@ -1,4 +1,5 @@
 import exceptions.ExistingLessonException;
+import models.Gender;
 import models.Lesson;
 import models.Student;
 import storages.LessonStorage;
@@ -132,7 +133,7 @@ public class EducationCenter implements Commands {
             if (lessonDataStr.equals("")) {
                 System.out.println("You forgot to fill all fields.");
                 addLesson();
-            } else if (lessonData.length < 4 && lessonDataStr != "") {
+            } else if (lessonData.length < 4) {
                 checkLessonInput(lessonData.length);
                 addLesson();
             } else {
@@ -200,7 +201,7 @@ public class EducationCenter implements Commands {
             try {
                 Lesson[] lessons = getLessonsForStudent();
                 if (lessons.length > 0) {
-                    System.out.println("Please, input your data. [name, surname, phone, email].");
+                    System.out.println("Please, input your data. [name, surname, phone, email, gender(MALE, FEMALE)].");
                     String studentDataStr = scanner.nextLine();
                     String[] studentData = studentDataStr.split(",");
                     if (studentDataStr.equals("")) {
@@ -216,7 +217,8 @@ public class EducationCenter implements Commands {
                             addStudent();
                         } else {
                             String uniqueID = UUID.randomUUID().toString();
-                            Student student = new Student(uniqueID, studentData[0], studentData[1], studentData[2], studentData[3], lessons);
+                            Gender gender = Gender.valueOf(studentData[4].toUpperCase());
+                            Student student = new Student(uniqueID, studentData[0], studentData[1], studentData[2], studentData[3], lessons, gender);
                             studentStorage.addStudent(student);
                         }
                     }

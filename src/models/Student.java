@@ -10,14 +10,16 @@ public class Student {
     private String phone;
     private String email;
     private Lesson[] lessons;
+    private Gender gender;
 
-    public Student(String id, String name, String surname, String phone, String email, Lesson[] lessons) {
+    public Student(String id, String name, String surname, String phone, String email, Lesson[] lessons, Gender gender) {
         this.id = id;
         this.name = name;
         this.surname = surname;
         this.phone = phone;
         this.email = email;
         this.lessons = lessons;
+        this.gender = gender;
     }
 
     public Student() {
@@ -71,6 +73,14 @@ public class Student {
         this.lessons = lessons;
     }
 
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -84,7 +94,8 @@ public class Student {
         if (phone != null ? !phone.equals(student.phone) : student.phone != null) return false;
         if (email != null ? !email.equals(student.email) : student.email != null) return false;
         // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        return Arrays.equals(lessons, student.lessons);
+        if (!Arrays.equals(lessons, student.lessons)) return false;
+        return gender == student.gender;
     }
 
     @Override
@@ -95,6 +106,7 @@ public class Student {
         result = 31 * result + (phone != null ? phone.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + Arrays.hashCode(lessons);
+        result = 31 * result + (gender != null ? gender.hashCode() : 0);
         return result;
     }
 
@@ -107,6 +119,7 @@ public class Student {
                 ", phone='" + phone + '\'' +
                 ", email='" + email + '\'' +
                 ", lessons=" + Arrays.toString(lessons) +
+                ", gender=" + gender +
                 '}';
     }
 }
